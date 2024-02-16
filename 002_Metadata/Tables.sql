@@ -1,30 +1,62 @@
 GO
-/**Object Fact***/ 
+
+/**Object Fact
+
+drop table [Fact].[Contracts]
+drop table [dim].[Cancellationreason]
+drop table [dim].[Product]
+drop table [dim].[PriceHistory]
+drop table [dim].[Region]
+drop table [dim].[Status]
+
+***/ 
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [Fact].[Contracts](
 	[Id] INT identity(1,1),
+	[Contract_Id] INT,
 	[Product_Id] INT,
 	[Region_Id] INT,
 	[Status_Id] INT,
-	[PriceComponent_Id] INT,
 	[Cancellationreason_Id] INT,
 	[Usage] BIGINT,
 	[Usage_Net] BIGINT,
-	[Price] DECIMAL(18,2),
-	[Valid_From_Date] DATE,
-	[Valid_Until_Date] DATE,
+	[Total_Revenue_LatestPrice] Decimal(18,2),
 	[Contract_Created_Date] DATE,
 	[Start_Date] DATE,
 	[End_Date] DATE,
 	[Fillingcancellation_Date] DATE,
-	[Record_Type_Id] INT,
 	[AccountingPeriod] INT,
+	[RecordType] Varchar(50),
 	[Created_DateTime] DATETIME,
 	[Modified_DateTime] DATETIME,
-	CONSTRAINT PK_dim_CRID PRIMARY KEY CLUSTERED ([Id])
+	CONSTRAINT PK_dim_fact PRIMARY KEY CLUSTERED ([Id])
 ) ON [PRIMARY]
 GO
+CREATE TABLE [Fact].[Contracts_Error](
+	[Id] INT identity(1,1),
+	[Contract_Id] INT,
+	[Product_Id] INT,
+	[Region_Id] INT,
+	[Status_Id] INT,
+	[Cancellationreason_Id] INT,
+	[Usage] BIGINT,
+	[Usage_Net] BIGINT,
+	[Total_Revenue_LatestPrice] Decimal(18,2),
+	[Contract_Created_Date] DATE,
+	[Start_Date] DATE,
+	[End_Date] DATE,
+	[Fillingcancellation_Date] DATE,
+	[AccountingPeriod] INT,
+	[RecordType] Varchar(50),
+	[Created_DateTime] DATETIME,
+	[Modified_DateTime] DATETIME,
+	CONSTRAINT PK_fact_error PRIMARY KEY CLUSTERED ([Id])
+) ON [PRIMARY]
+GO
+
+
+
 /****** Object:  Table [dim].[Cancellationreason]    Script Date: 16/02/2024 10:36:30 ******/
 SET ANSI_NULLS ON
 GO
@@ -40,22 +72,6 @@ CREATE TABLE [dim].[Cancellationreason](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dim].[PriceComponent]    Script Date: 16/02/2024 10:36:30 ******/
-SET ANSI_NULLS ON
-GO
-SET QUOTED_IDENTIFIER ON
-GO
-CREATE TABLE [dim].[PriceComponent](
-	[PriceComponent_Id] [int] IDENTITY(1,1) NOT NULL,
-	[Component] [varchar](50) NULL,
-	[Unit] [varchar](50) NULL,
-	[Created_datetime] [datetime] NULL,
- CONSTRAINT [PK_dim_PriceComponent] PRIMARY KEY CLUSTERED 
-(
-	[PriceComponent_Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
 /****** Object:  Table [dim].[Product]    Script Date: 16/02/2024 10:36:30 ******/
 SET ANSI_NULLS ON
 GO
@@ -63,18 +79,41 @@ SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dim].[Product](
 	[Product_Id] [int] IDENTITY(1,1) NOT NULL,
+	[id_product] [varchar](50) NULL,
 	[productcode] [varchar](50) NULL,
 	[productname] [varchar](50) NULL,
 	[Product_energy] [varchar](50) NULL,
 	[Product_consumptiontype] [varchar](50) NULL,
 	[Isdeleted] [varchar](50) NULL,
 	[Created_datetime] [datetime] NULL,
+	[Modified_datetime] [datetime] NULL,
  CONSTRAINT [PK_dim_product] PRIMARY KEY CLUSTERED 
 (
 	[Product_Id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dim].[PriceHistory](
+	[PriceHistory_Id] [int] IDENTITY(1,1) NOT NULL,
+	[id_product] [varchar](50) NULL,
+	[Product_component] [varchar](50) NULL,
+	[price] DECIMAL(18,2),
+	[Unit] [varchar](50) NULL,
+	[Valid_From] Date,
+	[Valid_To] Date,
+	[hashdiff] binary,
+	[Created_datetime] [datetime] NULL,
+ CONSTRAINT [PK_dim_Pricehistory] PRIMARY KEY CLUSTERED 
+(
+	[Pricehistory_Id] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+
+
+
 /****** Object:  Table [dim].[Region]    Script Date: 16/02/2024 10:36:30 ******/
 SET ANSI_NULLS ON
 GO
@@ -105,21 +144,6 @@ CREATE TABLE [dim].[Status](
 	[Status_Id] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
-GO
-/*****/
-CREATE TABLE [dim].[RecordType](
-	[RecordType_Id] [int] IDENTITY(1,1) NOT NULL,
-	[Description] [varchar](100) NULL,
-	[Created_datetime] [datetime] NULL,
- CONSTRAINT [PK_dim_RT] PRIMARY KEY CLUSTERED 
-(
-	[RecordType_Id] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
-) ON [PRIMARY]
-GO
-
-
-
 /****** Object:  Table [staging].[Contracts]    Script Date: 16/02/2024 10:36:30 ******/
 SET ANSI_NULLS ON
 GO
