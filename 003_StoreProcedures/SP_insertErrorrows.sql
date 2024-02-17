@@ -27,7 +27,7 @@ LEFT JOIN CDW.staging.products p on ct.productid=p.id
 where p.id is null
 )
 insert into [Fact].[Contracts_Error](Contract_Id,Product_Id,Region_Id,Status_Id,Cancellationreason_Id,Usage,Usage_Net,[Total_Revenue_LatestPrice],Contract_Created_Date,Start_Date,End_Date,Fillingcancellation_Date,AccountingPeriod,[RecordType],Created_DateTime,Modified_DateTime)
-Select cte.contractid,ISNULL(pd.Product_Id,-1),isnull(r.Region_Id,-1),isnull(st.Status_id,-1),isnull(cr.Cancellationreason_Id,-1),cte.usage,cte.usagenet,(cte.[baseprice]+(cast(cte.usagenet as INT)*cte.[workingprice])),cte.createdat,cte.startdate,cte.enddate,cte.fillingdatecancellation,cte.AccountingPeriod,'Correction',getdate(),getdate() from Cte_dataprep cte
+Select cte.contractid,ISNULL(pd.Product_Id,-1),isnull(r.Region_Id,-1),isnull(st.Status_id,-1),isnull(cr.Cancellationreason_Id,-1),CAST(COALESCE(NULLIF(cte.usage, ''), '0') AS DECIMAL(18,8)),CAST(COALESCE(NULLIF(cte.usagenet, ''), '0') AS DECIMAL(18,8)),(cte.[baseprice]+(CAST(COALESCE(NULLIF(cte.usagenet, ''), '0') AS DECIMAL(18,8))*cte.[workingprice])),cte.createdat,cte.startdate,cte.enddate,cte.fillingdatecancellation,cte.AccountingPeriod,'Correction',getdate(),getdate() from Cte_dataprep cte
 LEFT JOIN dim.region r on cte.city=r.city
 LEFT JOIN dim.status st on cte.status=st.status
 LEFT JOIN dim.Cancellationreason cr on cr.Cancellationreason=cte.Cancellationreason

@@ -1,6 +1,8 @@
 /*This procedure is designed to Merge source data from staging into Dimensions and facts. Please note points below in terms of historization of data in dimension tables. 
 
-1. Dimensions historization is used as scd type1. Which is always replace current value. This is for simplicity reason because to acheive what is requested we do not need to maintain dimension history
+1. Dimensions historization is used as scd type1. 
+Which is always replace current value. 
+This is for simplicity reason because to acheive what is requested we do not need to maintain dimension history
 
 */
 CREATE OR ALTER PROCEDURE SP_MERGEDIMENSIONs
@@ -67,21 +69,36 @@ where src.productcode<>tgt.productcode OR src.productname<>tgt.productname OR sr
 --Handle new inserts
  MERGE [dim].[PriceHistory] AS tgt
     USING (Select productid,productcomponent,unit,price,Valid_from,Valid_Until,getdate() as dt from staging.Prices ) As src
-	ON (src.productid=tgt.id_product and src.productcomponent=tgt.Product_component) and  hashbytes('sha256',convert(Nvarchar(32),lower(upper(cast(src.unit as Nvarchar(20))))+'|'+
-												lower(upper(cast(src.Valid_From as Nvarchar(20))))+'|'+
-												lower(upper(cast(src.Valid_Until as Nvarchar(20))))
+	ON (src.productid=tgt.id_product and src.productcomponent=tgt.Product_component and src.price=tgt.price) and  hashbytes('md5',convert(Nvarchar(32),lower(upper(cast(src.unit as Nvarchar(20))))+'|'+
+												lower(upper(cast(src.Valid_From as Nvarchar(20))))
 		))= tgt.hashdiff
+
+
  When NOT Matched
 	THEN 
 		Insert(id_product,Product_component,price,Unit,Valid_From,Valid_To,hashdiff,Created_datetime)
 		Values(src.productid,src.productcomponent,src.price,src.unit,src.Valid_from,src.Valid_Until,
-		hashbytes('sha256',convert(Nvarchar(32),lower(upper(cast(src.unit as Nvarchar(20))))+'|'+
-												lower(upper(cast(src.Valid_From as Nvarchar(20))))+'|'+
-												lower(upper(cast(src.Valid_Until as Nvarchar(20))))
+		hashbytes('md5',convert(Nvarchar(32),	lower(upper(cast(src.unit as Nvarchar(20))))+'|'+
+												lower(upper(cast(src.Valid_From as Nvarchar(20))))
 		))
 		
 		,src.dt);
 --Handle existing updates
+Update tgt 
+set tgt.unit=src.unit,
+	tgt.Valid_From=src.valid_from,
+	tgt.Valid_To=src.valid_until,
+	tgt.hashdiff=hashbytes('md5',convert(Nvarchar(32),	lower(upper(cast(src.unit as Nvarchar(20))))+'|'+
+												lower(upper(cast(src.Valid_From as Nvarchar(20))))
+		))
+from [dim].[PriceHistory] tgt
+JOIN  staging.Prices src on src.productid=tgt.id_product and src.productcomponent=tgt.Product_component and src.price=tgt.price
+and  hashbytes('md5',convert(Nvarchar(32),lower(upper(cast(src.unit as Nvarchar(20))))+'|'+
+												lower(upper(cast(src.Valid_From as Nvarchar(20))))
+		)) = tgt.hashdiff and tgt.Valid_To<>src.valid_until
+
+
+
 
 			   		 	  	  	   
 END 
@@ -89,6 +106,9 @@ END
 
 
 /*
+
+Truncate table [dim].[PriceHistory]
+
 select * from [dim].[PriceHistory]
 
 exec SP_MERGEDIMENSIONs
