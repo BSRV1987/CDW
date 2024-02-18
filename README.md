@@ -43,3 +43,8 @@ where RecordType='Correction' and AccountingPeriod=202012
 Count_of_Contracts_Loaded_20201201
 31149
 
+
+
+# ETL Pipeline
+
+![alt text](image.png)

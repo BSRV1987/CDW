@@ -1,0 +1,1 @@
+exec [dbo].[SP_MERGEFacts]

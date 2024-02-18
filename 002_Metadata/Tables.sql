@@ -163,6 +163,7 @@ CREATE TABLE [staging].[Contracts](
 	[city] [varchar](50) NULL,
 	[status] [varchar](50) NULL,
 	[productid] [varchar](50) NULL,
+	[Month] BIGINT NULL,
 	[modificationdate] [varchar](50) NULL
 ) ON [PRIMARY]
 GO
@@ -180,6 +181,7 @@ CREATE TABLE [staging].[Prices](
 	[unit] [varchar](50) NULL,
 	[valid_from] [varchar](50) NULL,
 	[valid_until] [varchar](50) NULL,
+	[Month] BIGINT NULL,
 	[modificationdate] [varchar](50) NULL
 ) ON [PRIMARY]
 GO
@@ -195,6 +197,7 @@ CREATE TABLE [staging].[Products](
 	[energy] [varchar](50) NULL,
 	[consumptiontype] [varchar](50) NULL,
 	[deleted] [varchar](50) NULL,
+	[Month] BIGINT NULL,
 	[modificationdate] [varchar](50) NULL
 ) ON [PRIMARY]
 GO

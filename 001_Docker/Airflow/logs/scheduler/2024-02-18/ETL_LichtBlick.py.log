@@ -1,0 +1,21 @@
+[2024-02-18T20:31:52.047+0000] {processor.py:161} INFO - Started process (PID=3812) to work on /opt/airflow/dags/ETL_LichtBlick.py
+[2024-02-18T20:31:52.056+0000] {processor.py:830} INFO - Processing file /opt/airflow/dags/ETL_LichtBlick.py for tasks to queue
+[2024-02-18T20:31:52.060+0000] {logging_mixin.py:188} INFO - [2024-02-18T20:31:52.059+0000] {dagbag.py:538} INFO - Filling up the DagBag from /opt/airflow/dags/ETL_LichtBlick.py
+[2024-02-18T20:31:55.125+0000] {logging_mixin.py:188} INFO - [2024-02-18T20:31:55.122+0000] {templater.py:95} ERROR - Failed to resolve template field 'sql'
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.8/site-packages/airflow/template/templater.py", line 93, in resolve_template_files
+    setattr(self, field, env.loader.get_source(env, content)[0])  # type: ignore
+  File "/home/airflow/.local/lib/python3.8/site-packages/jinja2/loaders.py", line 204, in get_source
+    raise TemplateNotFound(template)
+jinja2.exceptions.TemplateNotFound: ./dags/script/Dim.sql
+[2024-02-18T20:31:55.128+0000] {logging_mixin.py:188} INFO - [2024-02-18T20:31:55.127+0000] {templater.py:95} ERROR - Failed to resolve template field 'sql'
+Traceback (most recent call last):
+  File "/home/airflow/.local/lib/python3.8/site-packages/airflow/template/templater.py", line 93, in resolve_template_files
+    setattr(self, field, env.loader.get_source(env, content)[0])  # type: ignore
+  File "/home/airflow/.local/lib/python3.8/site-packages/jinja2/loaders.py", line 204, in get_source
+    raise TemplateNotFound(template)
+jinja2.exceptions.TemplateNotFound: ./dags/script/Dim.sql
+[2024-02-18T20:31:55.138+0000] {processor.py:840} INFO - DAG(s) 'csv_to_sqlserver_dag' retrieved from /opt/airflow/dags/ETL_LichtBlick.py
+[2024-02-18T20:31:55.211+0000] {logging_mixin.py:188} INFO - [2024-02-18T20:31:55.210+0000] {dag.py:3036} INFO - Sync 1 DAGs
+[2024-02-18T20:31:55.238+0000] {logging_mixin.py:188} INFO - [2024-02-18T20:31:55.238+0000] {dag.py:3823} INFO - Setting next_dagrun for csv_to_sqlserver_dag to None, run_after=None
+[2024-02-18T20:31:55.273+0000] {processor.py:183} INFO - Processing /opt/airflow/dags/ETL_LichtBlick.py took 3.241 seconds
