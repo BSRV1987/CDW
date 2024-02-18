@@ -1,7 +1,19 @@
 # CDW
 Sample Repository for data modelling
 
+# Tables Created
 
+1. [Fact].[Contracts]
+2. [dim].[Cancellationreason]
+3. [dim].[PriceHistory]
+4. [dim].[Product]
+5. [dim].[Region]
+6. [dim].[Status]
+7. [Fact].[Contracts_Error] -- To Move error rows
+
+# Dimensions and facts can be linked using fk's which are identity columns in dimensions
+
+# Fact table is coming from source as accumulated snapshot data. Hence contra corrections are implemented. where every new month data is loaded as correction+ contra rows from pervious month(negation of correction records if previous month exists.)
 
 # Question : 1 Average revenue per contract
 select AccountingPeriod,avg(Total_Revenue_LatestPrice) Average_Revenue,Count(*) Total_Contracts from fact.Contracts
