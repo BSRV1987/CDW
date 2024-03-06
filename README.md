@@ -1,5 +1,5 @@
 # CDW
-Sample Repository for data modelling
+Sample Repository for data modelling and orchestration using Airflow
 
 # Tables Created
 
