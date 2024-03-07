@@ -1,5 +1,5 @@
 # CDW
-Sample Repository for data modelling and orchestration using Airflow
+Sample Repository for data modelling , orchestration using Airflow and environment spun up in Docker. 
 
 # Tables Created
 
@@ -14,6 +14,7 @@ Sample Repository for data modelling and orchestration using Airflow
 # Dimensions and facts can be linked using fk's which are identity columns in dimensions
 
 # Fact table is coming from source as accumulated snapshot data. Hence contra corrections are implemented. where every new month data is loaded as correction+ contra rows from pervious month(negation of correction records if previous month exists.)
+# Some of the sample questions that are answered from the data model that is created
 
 # Question : 1 Average revenue per contract
 select AccountingPeriod,avg(Total_Revenue_LatestPrice) Average_Revenue,Count(*) Total_Contracts from fact.Contracts
