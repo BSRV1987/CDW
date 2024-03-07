@@ -1,5 +1,5 @@
 # CDW
-Sample Repository for data modelling , orchestration using Airflow and environment spun up in Docker. 
+Sample Repository for data modelling , orchestrated using Airflow and environment spun up in Docker. 
 
 # Tables Created
 
