@@ -60,4 +60,4 @@ Count_of_Contracts_Loaded_20201201
 
 # ETL Pipeline
 
-![alt text](image.png)
+Airflow dag is available under docker/Airflow section
